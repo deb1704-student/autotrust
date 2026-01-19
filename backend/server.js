@@ -20,4 +20,5 @@ app.use("/api/auth", authRoutes);
 const automationRoutes = require("./src/routes/automationRoutes");
 app.use("/api/automation", automationRoutes);
 
+const auditRoutes = require("./src/routes/auditRoutes");
 app.use("/api/audit", auditRoutes);
