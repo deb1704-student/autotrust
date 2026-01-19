@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import WorkflowBuilder from "../components/WorkflowBuilder";
 import { runAutomation } from "../services/api";
 
 export default function Automation() {
@@ -9,24 +10,29 @@ export default function Automation() {
     if (!token) window.location.href = "/";
   }, []);
 
-  const trigger = async () => {
-    const token = localStorage.getItem("token");
-    const res = await runAutomation(
-      { condition: "salary>50000", action: "Generate Rent Receipt" },
-      token
-    );
-    setResult(JSON.stringify(res));
-  };
+  const saveWorkflow = async (blocks) => {
+  const token = localStorage.getItem("token");
+
+  const conditions = blocks.filter(b => b.type === "condition").map(b => b.label);
+  const actions = blocks.filter(b => b.type === "action").map(b => b.label);
+
+  const res = await runAutomation(
+    { conditions, actions },
+    token
+  );
+
+  setResult(JSON.stringify(res, null, 2));
+};
+
 
   return (
-  <div style={{ padding: "40px" }}>
-    <h1>⚙️ Automation Dashboard</h1>
-    <p>Trigger secure automated actions with audit proof.</p>
+    <div style={{ padding: 40 }}>
+      <h1>⚙️ Automation Dashboard</h1>
+      <p>Build automations visually — no code required.</p>
 
-    <button onClick={trigger}>Run Automation</button>
+      <WorkflowBuilder onSave={saveWorkflow} />
 
-    <pre style={{ marginTop: "20px" }}>{result}</pre>
-  </div>
-);
-
+      <pre style={{ marginTop: 20 }}>{result}</pre>
+    </div>
+  );
 }
